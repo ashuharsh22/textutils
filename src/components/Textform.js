@@ -2,109 +2,70 @@ import React, {useState} from 'react'
 
 export default function TextForm(props)
 {
-  const handleUpClick=()=>{
-    console.log('Uppercase was clicked')
-    let newText=text.toUpperCase();
+  const handleUpClick = ()=>{
+    let newText = text.toUpperCase();
     setText(newText)
-  }
-  const handleDownClick=()=>{
-    console.log('Lowercase was clicked')
-    let downlo=text.toLowerCase();
-    setText(downlo)
-  }
-  const handleOnChange=(event)=>{
-    console.log('On change')
-    setText(event.target.value)
-  }
-  const clearText=()=>{
-    console.log('Text is cleared')
-    let cleart=''
-    setText(cleart)
-  }
+    props.showAlert("Converted to uppercase!", "success");
+}
 
-  const handleExtraSpaces=()=>{
-    let newText=text.split(/[ ]+/);
+const handleLoClick = ()=>{ 
+    let newText = text.toLowerCase();
+    setText(newText)
+    props.showAlert("Converted to lowercase!", "success");
+}
 
-    setText(newText.join(" "))
-  }
+const wordcount=()=>{
+  let newText=text;
+  newText.replace(/(^\s*)|(\s*$)/gi,"");
+  newText.replace(/[ ]{2,}/gi," ");
+  newText.replace(/\n /,"\n");
+  setText(newText);
+}
+const handleClearClick = ()=>{ 
+    let newText = '';
+    setText(newText);
+    props.showAlert("Text Cleared!", "success");
+}
 
-  const handleCopy=()=>{
-    console.log("Copy btn clicked")
-    var text=document.getElementById("myBox")
-    text.select();
-    navigator.clipboard.writeText(text.value);
-  }
-  const freqWord=()=>{
-    let str=text
-    let words = str.match(/\w+/g);
-  console.log(words); // [ 'How', 'do', 'you', 'do' ]
+const handleOnChange = (event)=>{
+    setText(event.target.value) 
+}
 
-  let occurances = {};
+// Credits: A
+const handleCopy = () => {
+    navigator.clipboard.writeText(text); 
+    props.showAlert("Copied to Clipboard!", "success");
+}
 
-  for (let word of words) {
-    if (occurances[word]) {
-      occurances[word]++;
-    } else {
-      occurances[word] = 1;
-    }
-  }
+// Credits: Coding Wala
+const handleExtraSpaces = () => {
+    let newText = text.split(/[ ]+/);
+    setText(newText.join(" "));
+    props.showAlert("Extra spaces removed!", "success");
+}
 
-  console.log(occurances); // { How: 1, do: 2, you: 1 }
-
-  let max = 0;
-  let mostRepeatedWord = '';
-
-  for (let word of words) {
-    if (occurances[word] > max) {
-      max = occurances[word];
-      mostRepeatedWord = word;
-    }
-  }
-
-  setText(mostRepeatedWord)
-  }
-  const dark=()=>{
-    var element=document.body
-    element.classList.toggle("dark-mode")
-  }
-  const email=()=>{
-     setText(text)
-  }
-  const copy=()=>{
-    var copyText=text
-    copyText.select();
-  copyText.setSelectionRange(0, 99999)
-  navigator.clipboard.writeText(copyText.value);
-  alert("Copied the text: "+copyText.value)
-  }
-  const [text,setText]=useState('Enter text here')
+const [text, setText] = useState(''); 
   return (
     <>
-    <div className='container'>
-  <div class="mb-3">
-  <label for="myBox" class="form-label">Text Box</label>
-  <textarea className="form-control" id="myBox" onChange={handleOnChange} rows="8" value={text}>
-  </textarea>
-  </div> 
-  <button className='btn btn-primary mx-1' onClick={handleUpClick}>Convert to Uppercase</button>
-  
-  <button className='btn btn-primary mx-1' onClick={handleDownClick}
-  >Convert to Lowercase</button>
-  <button type="button" class="btn btn-danger mx-1" onClick={clearText}>Clear Text</button>
-  <button type="button" class="btn btn-danger mx-1" onClick={freqWord}>Most frequent word</button>
-  <button type="button" class="btn btn-primary mx-1" onClick={email}>Email extractor</button>
-  <button type="button" class="btn btn-primary mx-1" onClick={handleCopy}>Copy to clipboard</button>
-  <button type="button" class="btn btn-primary mx-1" onClick={handleExtraSpaces}>Remove extra spaces</button>
+    <div className="container" style={{color: props.mode==='dark'?'white':'#042743'}}> 
+        <h1 className='mb-4'>{props.heading}</h1>
+        <div className="mb-3"> 
+        <textarea className="form-control" value={text} onChange={handleOnChange} style={{backgroundColor: props.mode==='dark'?'#13466e':'white', color: props.mode==='dark'?'white':'#042743'}} id="myBox" rows="8"></textarea>
+        </div>
+        <button disabled={text.length===0} className="btn btn-primary mx-1 my-1" onClick={handleUpClick}>Convert to Uppercase</button>
+        <button disabled={text.length===0} className="btn btn-primary mx-1 my-1" onClick={handleLoClick}>Convert to Lowercase</button>
+        <button disabled={text.length===0} className="btn btn-primary mx-1 my-1" onClick={handleClearClick}>Clear Text</button>
+        <button disabled={text.length===0} className="btn btn-primary mx-1 my-1" onClick={handleCopy}>Copy Text</button>
+        
+        <button disabled={text.length===0} className="btn btn-primary mx-1 my-1" onClick={handleExtraSpaces}>Remove Extra Spaces</button>
     </div>
-    <div className="container my-2">
-    <h1>Your text summary</h1>
-    <p>words {text.split(" ").length} and {text.length} characters</p>
-    <p>{0.008*text.split(" ").length } Minutes read</p>
-    <h2>Preview</h2>
-    <p>{text}</p>
-    <button type="button" class="btn btn-dark" onClick={dark}>Dark Mode</button>
-    
+    <div className="container my-3" style={{color: props.mode==='dark'?'white':'#042743'}}>
+        <h2>Your text summary</h2>
+        <p>{text.split(/\s+/).filter((element)=>{return element.length!==0}).length} words and {text.length} characters</p>
+        <p>{0.008 *  text.split(/\s+/).filter((element)=>{return element.length!==0}).length} Minutes read</p>
+        <h2>Preview</h2>
+        <p>{text.length>0?text:"Nothing to preview!"}</p>
     </div>
     </>
-  )
+)
 }
