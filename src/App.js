@@ -1,10 +1,15 @@
 import './App.css';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Link
+} from "react-router-dom";
 import Navbar from './components/Navbar';
 import TextForm from './components/Textform';
 import About from './components/About';
 import React, { useState } from 'react';
 import Alert from './components/Alert';
-
 
  
 function App() {
@@ -35,19 +40,25 @@ function App() {
       document.title="TextUtils - Light mode enabled"
     }
   }
-  
-
 return (
     <>
-
+<Router>
 <Navbar title="TitleUtils" mode={mode} toggleMode={toggleMode} /> 
 <Alert alert={alert}/>
 <div className="container my-3">
-<TextForm heading="Enter the text to analyze below" mode={mode}/>
-{/*<About />*/}
+<Routes>
+          <Route path="/about">
+            <About />
+          </Route>
+          
+          <Route path="/">
+          <TextForm showAlert={showAlert} heading="Enter the text to analyze below" mode={mode}/>
+          </Route>
+</Routes>
+<About />
 </div>
+</Router>
 </>
 );
 }
-
 export default App;
