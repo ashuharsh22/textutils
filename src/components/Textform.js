@@ -31,13 +31,11 @@ const handleOnChange = (event)=>{
     setText(event.target.value) 
 }
 
-// Credits: A
 const handleCopy = () => {
     navigator.clipboard.writeText(text); 
     props.showAlert("Copied to Clipboard!", "success");
 }
 
-// Credits: Coding Wala
 const handleExtraSpaces = () => {
     let newText = text.split(/[ ]+/);
     setText(newText.join(" "));
