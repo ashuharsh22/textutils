@@ -23,7 +23,18 @@
   font-size: calc(10px + 2vmin);
   color: white;
 }
-
+button {
+  background-color: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+}
+.on {
+  color: #000;
+}
+.off {
+  color: #ccc;
+}
 .App-link {
   color: #61dafb;
 }
